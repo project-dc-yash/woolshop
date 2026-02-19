@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | 3-Box Booking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c1015;
+            --card: #1e252e;
+            --accent: #7c5dfa;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; padding: 40px 20px; }
+
+        .layout-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* This creates the 3 boxes side-by-side */
+            gap: 20px;
+        }
+
+        /* Common Style for all 3 Boxes */
+        .box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            height: fit-content;
+        }
+
+        .box-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+        }
+
+        /* Box 1: Product Preview */
+        .p-img { width: 100%; height: 180px; border-radius: 15px; object-fit: cover; margin-bottom: 15px; }
+        .p-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
+        .p-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+
+        /* Box 2: Order Summary (Clear Pricing) */
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; color: var(--text-dim); }
+        .total-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 1.4rem; font-weight: 800; color: white; }
+
+        /* Box 3: Booking Process Form */
+        .step-dots { display: flex; gap: 10px; margin-bottom: 20px; }
+        .dot { width: 33%; height: 4px; background: var(--border); border-radius: 10px; }
+        .dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+        input {
+            width: 100%; padding: 14px; background: #12181f; border: 1px solid var(--border);
+            border-radius: 12px; color: white; margin-bottom: 15px; outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+
+        .confirm-btn {
+            width: 100%; background: var(--accent); color: white; border: none;
+            padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .confirm-btn:hover { filter: brightness(1.2); transform: translateY(-3px); }
+
+        /* Responsive for Tablets/Phones */
+        @media (max-width: 900px) {
+            .layout-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="layout-container">
+        
+        <div class="box">
+            <div class="box-title"><span>01</span> Product Details</div>
+            <img id="pImg" src="" class="p-img">
+            <h2 id="pName" class="p-name">Loading...</h2>
+            <p class="p-desc">High-quality industrial wool product sourced directly from the farmer exchange. Hand-checked for quality 2025.</p>
+        </div>
+
+        <div class="box">
+            <div class="box-title"><span>02</span> Order Summary</div>
+            <div class="price-row">
+                <span>Unit Price</span>
+                <span id="pUnitPrice">RS 0.00</span>
+            </div>
+            <div class="price-row">
+                <span>Shipping Fee</span>
+                <span>RS 50.00</span>
+            </div>
+            <div class="price-row">
+                <span>Processing Tax</span>
+                <span>RS 10.00</span>
+            </div>
+            <div class="total-row">
+                <span>Total</span>
+                <span id="pTotal">RS 0.00</span>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="box-title"><span>03</span> Booking Process</div>
+            <div class="step-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px;">Step 1: Contact Information</p>
+            <form id="bookingForm">
+                <input type="text" placeholder="Your Full Name" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <input type="text" placeholder="Delivery Address" required>
+                <button type="button" class="confirm-btn" onclick="completeBooking()">Confirm Order</button>
+            </form>
+            <a href="products.html" style="display: block; text-align: center; margin-top: 15px; color: var(--text-dim); text-decoration: none; font-size: 0.8rem;">Cancel Order</a>
+        </div>
+
+    </div>
+
+    <script>
+        // Catch data from URL
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name') || "Wool Product";
+            const price = parseFloat(params.get('price')) || 0;
+            const img = params.get('img');
+
+            document.getElementById('pName').innerText = decodeURIComponent(name);
+            document.getElementById('pImg').src = decodeURIComponent(img);
+            document.getElementById('pUnitPrice').innerText = "RS " + price;
+            
+            // Calculate Total (Price + 50 Shipping + 10 Tax)
+            const total = price + 50 + 10;
+            document.getElementById('pTotal').innerText = "RS " + total.toFixed(2);
+        };
+
+        function completeBooking() {
+            alert("Booking Confirmed! Your wool product is now in the processing stage.");
+            window.location.href = "products.html";
+        }
+    </script>
+</body>
+</html>

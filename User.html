@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wool Premium Mart | Live Images</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #a855f7; --accent: #22d3ee;
+            --bg-dark: #0f172a; --card-bg: rgba(30, 41, 59, 0.7); --text: #f8fafc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text); overflow-x: hidden; }
+
+        /* Navigation */
+        nav { 
+            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(15, 23, 42, 0.9); position: sticky; top: 0; z-index: 1000; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+        }
+        .logo { font-size: 1.6rem; font-weight: 800; background: linear-gradient(to right, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        
+        /* Product Card */
+        .p-card { background: var(--card-bg); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; cursor: pointer; }
+        .p-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(34, 211, 238, 0.2); }
+        .p-img { width: 100%; height: 200px; object-fit: cover; border-radius: 15px; background: #1e293b; }
+
+        /* Side Panel */
+        .side-panel {
+            position: fixed; top: 0; right: -100%; width: 45%; height: 100%;
+            background: #0f172a; border-left: 2px solid var(--primary);
+            z-index: 2000; padding: 40px; overflow-y: auto;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -20px 0 50px rgba(0,0,0,0.9);
+        }
+        .side-panel.active { right: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 1500; }
+
+        /* Buttons & Inputs */
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn-buy { background: linear-gradient(to right, var(--primary), var(--secondary)); color: white; }
+        .btn-add { background: rgba(34, 211, 238, 0.1); color: var(--accent); border: 1px solid var(--accent); }
+        input, textarea, select { width: 100%; padding: 12px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-top: 10px; }
+
+        .track-card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid var(--accent); margin-bottom: 30px; display: none; }
+        
+        @media (max-width: 768px) { .side-panel { width: 95%; } }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+    <nav>
+        <div class="logo">Wool Supply</div>
+        <div style="font-weight: 600;">🛒 Cart (<span id="cartCount">0</span>)</div>
+    </nav>
+
+    <div class="container">
+        <div id="trackingUI" class="track-card">
+            <h2 style="color: var(--accent);">✅ Order Confirmed!</h2>
+            <p id="orderID" style="color: #94a3b8; margin: 5px 0;"></p>
+            <h3>Arriving on: <span id="deliveryDate" style="color: #4ade80;"></span></h3>
+        </div>
+
+        <h2 style="margin-bottom: 25px;">Available Wool Supply</h2>
+        <div class="grid" id="productGrid"></div>
+    </div>
+
+    <div class="side-panel" id="sidePanel">
+        <button onclick="closePanel()" style="background:none; border:none; color:var(--accent); cursor:pointer; font-weight:800; margin-bottom:20px;">✕ CLOSE DETAILS</button>
+        <div id="panelBody"></div>
+
+        <div style="margin-top: 30px; border-top: 1px solid #334155; padding-top: 20px;">
+            <h3>Wool Quality Feedback</h3>
+            <textarea id="revInput" placeholder="Feedback on texture, softness, or processing..."></textarea>
+            <button class="btn btn-add" onclick="addReview()">Post Review</button>
+            <div id="revList" style="margin-top: 15px;"></div>
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px solid #334155; padding-top: 20px;">
+            <h3>Delivery Details</h3>
+            <input type="text" id="name" placeholder="Full Name">
+            <input type="text" id="addr" placeholder="Address, City, State">
+            <button class="btn btn-buy" onclick="orderNow()">Confirm & Buy Now</button>
+        </div>
+    </div>
+
+    <script>
+        // Directly usable professional images (Open Source)
+        const products = [
+            { id: 1, name: "Merino Wool White", price: 950, img: "https://images.pexels.com/photos/4207791/pexels-photo-4207791.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 2, name: "Raw Sheep Fleece", price: 400, img: "https://images.pexels.com/photos/673532/pexels-photo-673532.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 3, name: "Hand-Spun Yarn", price: 650, img: "https://images.pexels.com/photos/5965934/pexels-photo-5965934.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 4, name: "Golden Alpaca Fiber", price: 1500, img: "https://images.pexels.com/photos/5965931/pexels-photo-5965931.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 5, name: "Indigo Dyed Wool", price: 800, img: "https://images.pexels.com/photos/5965928/pexels-photo-5965928.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 6, name: "Natural Grey Cashmere", price: 2800, img: "https://images.pexels.com/photos/3735169/pexels-photo-3735169.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 7, name: "Wool Roving Tops", price: 1100, img: "https://images.pexels.com/photos/5965933/pexels-photo-5965933.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 8, name: "Knitting Yarn Balls", price: 500, img: "https://images.pexels.com/photos/5788151/pexels-photo-5788151.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 9, name: "Organic Farm Fleece", price: 700, img: "https://images.pexels.com/photos/673533/pexels-photo-673533.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { id: 10, name: "Mohair Soft Blend", price: 2200, img: "https://images.pexels.com/photos/5965935/pexels-photo-5965935.jpeg?auto=compress&cs=tinysrgb&w=600" }
+        ];
+
+        let cartCount = 0;
+        const grid = document.getElementById('productGrid');
+
+        // Populate Grid
+        products.forEach(p => {
+            grid.innerHTML += `
+                <div class="p-card" onclick="openPanel(${p.id})">
+                    <img src="${p.img}" class="p-img" alt="${p.name}">
+                    <h3 style="margin-top:15px; margin-bottom:5px;">${p.name}</h3>
+                    <p style="color:var(--accent); font-weight:800">RS ${p.price}</p>
+                </div>
+            `;
+        });
+
+        function openPanel(id) {
+            const p = products.find(item => item.id === id);
+            document.getElementById('panelBody').innerHTML = `
+                <img src="${p.img}" style="width:100%; border-radius:15px; border:1px solid var(--accent); height:300px; object-fit:cover;">
+                <h1 style="margin-top:20px; color:var(--accent)">${p.name}</h1>
+                <p style="font-size:1.6rem; font-weight:800; margin:5px 0">RS ${p.price}</p>
+                <p style="color:#94a3b8; line-height:1.6; font-size:1rem;">Verified Quality. Sourced directly from local farms. Highly breathable and exceptionally soft texture.</p>
+                <button class="btn btn-add" onclick="updateCart()">Add to Cart</button>
+            `;
+            document.getElementById('sidePanel').classList.add('active');
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePanel() {
+            document.getElementById('sidePanel').classList.remove('active');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function updateCart() {
+            cartCount++;
+            document.getElementById('cartCount').innerText = cartCount;
+            alert("Added to cart successfully!");
+        }
+
+        function addReview() {
+            const txt = document.getElementById('revInput').value;
+            if(!txt) return;
+            document.getElementById('revList').innerHTML += `
+                <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:10px; margin-top:10px; border-left:3px solid var(--secondary); font-size:0.9rem;">
+                    <b>Buyer Feedback:</b> ${txt}
+                </div>`;
+            document.getElementById('revInput').value = "";
+        }
+
+        function orderNow() {
+            const name = document.getElementById('name').value;
+            const addr = document.getElementById('addr').value;
+            if(!name || !addr) { alert("Please enter Name and Address!"); return; }
+
+            const d = new Date(); d.setDate(d.getDate() + 4);
+            const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            closePanel();
+            document.getElementById('trackingUI').style.display = 'block';
+            document.getElementById('orderID').innerText = "Tracking ID: #WOOL-" + Math.floor(Math.random()*900000 + 100000);
+            document.getElementById('deliveryDate').innerText = dateStr;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

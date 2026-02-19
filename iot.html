@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wool Command Center | Quality & IoT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06080a;
+            --card: #12161d;
+            --accent: #7c5dfa;
+            --iot-green: #00e676;
+            --alert: #ff4757;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+
+        /* --- SENSOR SIDEBAR --- */
+        .sidebar {
+            width: 320px; background: var(--card); border-right: 1px solid var(--border);
+            padding: 20px; display: flex; flex-direction: column; gap: 15px;
+        }
+        .side-title { color: var(--accent); font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 5px; }
+        .s-card { background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .s-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; display: block; }
+        .s-val { font-size: 1.3rem; font-weight: 800; }
+
+        /* --- MAIN DASHBOARD --- */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; overflow-y: auto; }
+        
+        .feed-container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; min-height: 400px; }
+        
+        .monitor-frame {
+            background: #000; border-radius: 20px; border: 4px solid #1e252e;
+            position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        #webCamVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+        /* IMAGE DATABASE GALLERY */
+        .image-db {
+            background: var(--card); border-radius: 20px; padding: 15px;
+            display: flex; flex-direction: column; border: 1px solid var(--border);
+        }
+        .gallery-grid {
+            display: grid; grid-template-columns: 1fr; gap: 10px;
+            overflow-y: auto; max-height: 450px; margin-top: 10px;
+        }
+        .db-img-wrapper {
+            position: relative; border-radius: 8px; overflow: hidden; border: 2px solid var(--border);
+            background: #000;
+        }
+        .db-img-wrapper img { width: 100%; height: 120px; object-fit: cover; display: block; opacity: 0.8; }
+        .grade-tag {
+            position: absolute; top: 10px; right: 10px; padding: 2px 8px;
+            border-radius: 4px; font-size: 0.6rem; font-weight: 800;
+        }
+        .grade-high { background: var(--iot-green); color: #000; }
+        .db-timestamp { font-size: 0.6rem; padding: 8px; color: var(--text-dim); }
+
+        /* --- CONTROL PANEL --- */
+        .controls { display: flex; gap: 15px; }
+        .btn {
+            flex: 1; height: 50px; border-radius: 12px; border: none; font-weight: 800;
+            cursor: pointer; transition: 0.2s; color: #fff;
+        }
+        .btn-cap { background: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 class="side-title">FARM TELEMETRY</h2>
+        <div class="s-card"><span class="s-label">Humidity (DHT22)</span><span class="s-val" id="hum">64.2</span><span style="color:var(--accent)">%</span></div>
+        <div class="s-card"><span class="s-label">Soil Moisture</span><span class="s-val" id="soil">45</span><span style="color:var(--accent)">%</span></div>
+        <div class="s-card"><span class="s-label">Air Quality</span><span class="s-val" id="gas" style="color:var(--iot-green)">GOOD</span></div>
+    </div>
+
+    <div class="main-content">
+        <div class="feed-container">
+            <div class="monitor-frame">
+                <div style="position:absolute; top:15px; left:15px; color:white; background:rgba(255,0,0,0.7); padding:4px 10px; border-radius:4px; font-size:0.7rem; z-index:5;">LIVE INSPECTION</div>
+                <video id="webCamVideo" autoplay playsinline></video>
+            </div>
+
+            <div class="image-db">
+                <h2 class="side-title">QUALITY DATABASE</h2>
+                <div class="gallery-grid" id="galleryGrid">
+                    </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-cap" onclick="captureAndGrade()">📸 ANALYZE WOOL QUALITY</button>
+        </div>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const video = document.getElementById('webCamVideo');
+        const canvas = document.getElementById('canvas');
+        const gallery = document.getElementById('galleryGrid');
+
+        // Initialize Camera
+        async function startCam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (err) { console.error("Camera access denied."); }
+        }
+
+        // Capture and Add to Database with "Right Quality" label
+        function captureAndGrade() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const dataUrl = canvas.toDataURL('image/png');
+            
+            const wrap = document.createElement('div');
+            wrap.className = 'db-img-wrapper';
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            
+            // This is where we mark it as "Right Quality" based on your request
+            wrap.innerHTML = `
+                <div class="grade-tag grade-high">RIGHT QUALITY</div>
+                <img src="${dataUrl}">
+                <div class="db-timestamp">Captured: ${timeStr}</div>
+            `;
+            
+            gallery.insertBefore(wrap, gallery.firstChild);
+        }
+
+        startCam();
+    </script>
+</body>
+</html>

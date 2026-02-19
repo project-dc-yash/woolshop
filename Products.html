@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wool Pro | Premium Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c1015;
+            --card: #1e252e;
+            --accent: #7c5dfa;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); }
+
+        /* --- Hero Banner --- */
+        .hero {
+            height: 400px;
+            background: linear-gradient(to right, rgba(12, 16, 21, 0.9), transparent), 
+                        url('https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=1200');
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; padding: 0 5%;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 15px; }
+        .hero-content p { color: var(--text-dim); font-size: 1.2rem; max-width: 500px; }
+
+        /* --- Grid --- */
+        .container { max-width: 1200px; margin: 50px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); }
+
+        .img-box { height: 220px; position: relative; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .price-tag {
+            position: absolute; bottom: 15px; right: 15px;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            padding: 5px 12px; border-radius: 10px; font-weight: 700;
+        }
+
+        .info { padding: 20px; }
+        .info h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .info p { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px; height: 40px; }
+
+        .shop-btn {
+            width: 100%; background: var(--accent); color: white; border: none;
+            padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: 0.3s;
+        }
+        .shop-btn:hover { filter: brightness(1.2); box-shadow: 0 0 20px rgba(124, 93, 250, 0.4); }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>Sustainable & Soft<br>Farm-to-Fashion</h1>
+        <p>Industrial grade sheep wool products for global manufacturers.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid">
+        <div class="card">
+              <!-- 1 -->
+            <div class="img-box">
+                <img src="https://i.etsystatic.com/5251007/r/il/2dcd47/1524688513/il_fullxfull.1524688513_j6o3.jpg">
+                <div class="price-tag"> RS 80.50</div>
+            </div>
+            <div class="info">
+                <h3>Wool Tops & Rovings:</h3>
+                <p>Cleaned, combed, and carded wool fibers ready for spinning or felting.</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+
+    <!-- 2 -->
+        <div class="card">
+            <div class="img-box">
+                <img src="https://m.media-amazon.com/images/I/61k+3gBz3ZL._AC_UF894,1000_QL80_.jpg">
+                <div class="price-tag"> RS. 100</div>
+            </div>
+            <div class="info">
+                <h3>Wool Tops & Noils</h3>
+                <p>Fine combed fibers for worsted manufacturing.</p>
+                <button class="shop-btn" onclick="goToBooking('Wool Tops', '45.00', 'https://images.unsplash.com/photo-1621434913220-410714b29f03?w=400')">Shop Now</button>
+            </div>
+        </div>
+  <!-- 3 -->
+        <div class="card">
+            <div class="img-box">
+                <img src=" https://m.media-amazon.com/images/S/aplus-media-library-service-media/3f7f6cca-b213-4479-a0d3-1d0a8bcfd31f.__CR0,0,970,600_PT0_SX970_V1___.jpg">
+                <div class="price-tag">RS. 600.50</div>
+            </div>
+            <div class="info">
+                <h3>Accessories </h3>
+                <p>Shawls, stoles, mufflers, and ponchos.</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+
+          <!-- 4 -->
+        <div class="card">
+            <div class="img-box">
+                <img src="https://media.istockphoto.com/id/1214170063/photo/colorful-warm-clothes-in-the-form-of-hats-gloves-and-mittens.jpg?s=1024x1024&w=is&k=20&c=EEj5ivIWmNWLapJ-OfX2BwwPmaRVuA2cXFqPRAHINP8=">
+                <div class="price-tag"> RS 200.OO</div>
+            </div>
+            <div class="info">
+                <h3>Greasy Wool Fleece</h3>
+                <p>Clothing: Sweaters, cardigans, socks, hats, gloves, and thermal wear.</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+
+          <!-- 5 -->
+        <div class="card">
+            <div class="img-box">
+                <img src="https://www.self-build.co.uk/wp-content/uploads/2023/03/iStock-1224260881-CREDIT-Bilanol.webp">
+                <div class="price-tag">$12.50</div>
+            </div>
+            <div class="info">
+                <h2> Industrial & Specialized Products </h2>
+                <h3> Building Materials: </h3>
+                <p>Sustainable home insulation, soundproofing panels, and wool-reinforced bricks.</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+  <!-- 6 -->
+        <div class="card">
+            <div class="img-box">
+                <img src=" https://media.licdn.com/dms/image/v2/D5612AQFcgUPtrtR-EA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1696231788664?e=2147483647&v=beta&t=oM0d-aJGw0PiPPrpW1ls5fGQG8TMkzqr--FbxPWyRVU">
+                <div class="price-tag">Rs 12.50</div>
+            </div>
+            <div class="info">
+                <h3>Greasy Wool Fleece</h3>
+                <p>Wool: Where Comfort Meets Style.</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+ <!-- 7 -->
+        <div class="card">
+            <div class="img-box">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2AGaJwXxgXxlYdP8K3H7uVSeNXMVR2xvvw&s">
+                <div class="price-tag">Rs 52.50</div>
+            </div>
+            <div class="info">
+                <h3>Greasy Wool Fleece</h3>
+                <p>Wool .</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+ <!-- 8 -->
+        <div class="card">
+            <div class="img-box">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcCHol5Qt0J-7dW2wgAve25J8ZpxH-6HitKQ&s">
+                <div class="price-tag">Rs 92.50</div>
+            </div>
+            <div class="info">
+                <h3>Merino wool</h3>
+                <p>Merino wool comes from the Merino sheep, known for its softness and fineness.</p>
+                <button class="shop-btn" onclick="goToBooking('Greasy Wool', '12.50', 'https://images.unsplash.com/photo-1583209814683-c023dd293cc6?w=400')">Shop Now</button>
+            </div>
+        </div>
+
+
+        </div>
+</div>
+
+
+<script>
+    function goToBooking(name, price, img) {
+        window.location.href = `My Bookings.html?name=${encodeURIComponent(name)}&price=${price}&img=${encodeURIComponent(img)}`;
+    }
+</script>
+
+</body>
+</html>
